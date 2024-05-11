@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 const formSchema = z.object({
@@ -14,21 +15,22 @@ const formSchema = z.object({
 })
 export const StoreModal = () => {
     const storeModal = useStoreModal();
-    const [loading,setLoading] = useState(false);
-    const form  = useForm<z.infer<typeof formSchema>>({
+    const [loading, setLoading] = useState(false);
+    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues:{
-            name:"",
+        defaultValues: {
+            name: "",
         },
     });
-    const onSubmit = async (values:z.infer<typeof formSchema>)=>{
-        try{
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
             setLoading(true);
-            const response = await axios.post('/api/stores',values);
-            console.log(response.data);
-        }catch(error){
-            console.log(error);
-        }finally{
+            const response = await axios.post('/api/stores', values);
+            window.location.assign(`/${response.data.id}`)
+
+        } catch (error) {
+            toast.error("Something went wrong");
+        } finally {
             setLoading(false);
         }
         //TODO: Create Store
@@ -48,13 +50,13 @@ export const StoreModal = () => {
                             <FormField
                                 control={form.control}
                                 name="name"
-                                render={({field})=>(
+                                render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Name</FormLabel>
                                         <FormControl>
-                                            <Input disabled={loading} placeholder="E-Commerce" {...field}/>
+                                            <Input disabled={loading} placeholder="E-Commerce" {...field} />
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -66,7 +68,7 @@ export const StoreModal = () => {
                     </Form>
                 </div>
             </div>
-                
+
         </Modal>
     )
 
